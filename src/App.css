@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+.recipe-body {
+  display: flex;
+  /* margin: 50px; */
+}
+
+.margin {
+  margin: 3vw;
+}
+.steps {
+  margin-left: 10vw;
+}
