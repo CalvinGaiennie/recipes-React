@@ -1,8 +1,17 @@
+import { useState } from "react";
 import "./App.css";
+import { click } from "@testing-library/user-event/dist/click";
+const recipeNames = [
+  { title: "Sushi Rice", key: "SushiRice" },
+  { title: "Pita Bread", key: "PitaBread" },
+  { title: "Chicken Salad", key: "ChickenSalad" },
+  { title: "Beef Noodles", key: "BeefNoodles" },
+  { title: "Chicken Parmesean", key: "ChickenParmesean" },
+  { title: "Meatloaf", key: "Meatloaf" },
+];
 
-const recipeNames = [];
-const recipeData = [
-  {
+const recipeData = {
+  SushiRice: {
     title: "Sushi Rice",
     ingredients: [
       `{rice} cups of sushi rice (short or medium grain rice.)`,
@@ -26,7 +35,7 @@ const recipeData = [
       salt: 0.5,
     },
   },
-  {
+  PitaBread: {
     title: "Pita Bread",
     ingredients: [
       `{water} cups of water`,
@@ -52,8 +61,7 @@ const recipeData = [
       oliveOil: 0.5,
     },
   },
-
-  {
+  ChickenSalad: {
     title: "Chicken Salad",
     ingredients: [
       `{chickenBreast} pounds of cooked chicken breast diced.`,
@@ -77,7 +85,7 @@ const recipeData = [
       lemonJuice: 0.75,
     },
   },
-  {
+  BeefNoodles: {
     title: "Beef Noodles",
     ingredients: [
       `{garlic} garlic cloves, minced`,
@@ -129,7 +137,7 @@ const recipeData = [
       broccoli: 0.75,
     },
   },
-  {
+  ChickenParmesean: {
     title: "Chicken Parmesan",
     ingredients: [
       `{chickenBreast} Large Chick Breast`,
@@ -163,7 +171,7 @@ const recipeData = [
       mozzarella: 1.5,
     },
   },
-  {
+  Meatloaf: {
     title: ["Meatloaf"],
     ingredients: [
       "{groundBeef}lbs of ground beef",
@@ -201,13 +209,17 @@ const recipeData = [
       ketchupS: 0.25,
     },
   },
-];
+};
 function App() {
+  const [selectedRecipe, setSelectedRecipe] = useState("Beef Noodles");
   return (
     <div>
       <Header />
-      <Settings />
-      <Body />
+      <Settings
+        selectedRecipe={selectedRecipe}
+        onSetSelectedRecipe={setSelectedRecipe}
+      />
+      <Body selectedRecipe={selectedRecipe} />
     </div>
   );
 }
@@ -216,18 +228,21 @@ function Header() {
   return (
     <div className="header margin">
       <h1>Calvin's Recipes</h1>
-      <p>Here are some recipes I've been enjoying recently.</p>
+      <h2>Here are some recipes I've been enjoying recently.</h2>
     </div>
   );
 }
 
-function Settings() {
-  const recipes = recipeData;
+function Settings({ selectedRecipe, onSetSelectedRecipe }) {
+  const recipes = recipeNames;
   return (
     <div className="margin">
       <h2>Settings</h2>
       <div>
-        <select>
+        <select
+          value={selectedRecipe}
+          onChange={(e) => onSetSelectedRecipe(e.target.value)}
+        >
           {recipes.map((recipe) => (
             <RecipeOptions recipeObj={recipe} key={recipe.title} />
           ))}
@@ -239,46 +254,38 @@ function Settings() {
     </div>
   );
 }
-function Body() {
+function Body({ selectedRecipe }) {
+  const recipeObjects = recipeData;
+  const object = selectedRecipe.replace(/\s+/g, "");
+  const currentObject = recipeObjects[object];
   return (
-    <div className="recipe-body margin">
-      <Ingredients />
-      <Steps />
+    <div>
+      <div className="recipe-body margin">
+        <Ingredients currentObject={currentObject} />
+        <Steps currentObject={currentObject} />
+      </div>
     </div>
   );
 }
-function Ingredients() {
-  const recipes = recipeData;
+function Ingredients({ currentObject }) {
   return (
     <div className="body-parts">
       <h2>Ingredients</h2>
-      <ul>
-        {recipes.map((recipe) => (
-          <Ingredient recipeObj={recipe} key={recipe.title} />
-        ))}
-      </ul>
-    </div>
-  );
-}
-function Ingredient({ recipeObj }) {
-  return (
-    <li>
-      <p>{recipeObj.ingredients}</p>
-      {/* I need to figure out how to ge this to be the current recipe */}
-    </li>
-  );
-}
-function RecipeOptions({ recipeObj }) {
-  return <option value={recipeObj.title}>{recipeObj.title}</option>;
-}
-function Steps() {
-  return (
-    <div className="steps body-parts">
-      <h2>Steps</h2>
-      <p>one</p>
-      <p>two</p>
+      <p>{currentObject.ingredients}</p>
     </div>
   );
 }
 
+function Steps({ currentObject }) {
+  return (
+    <div className="steps body-parts">
+      <h2>Steps</h2>
+      <p>{currentObject.steps}</p>
+    </div>
+  );
+}
+
+function RecipeOptions({ recipeObj }) {
+  return <option value={recipeObj.title}>{recipeObj.title}</option>;
+}
 export default App;
