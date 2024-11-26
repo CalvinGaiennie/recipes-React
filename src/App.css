@@ -48,3 +48,11 @@
 .steps {
   margin-left: 10vw;
 }
+
+.flex {
+  display: flex;
+}
+
+.setting {
+  margin-left: 15vh;
+}

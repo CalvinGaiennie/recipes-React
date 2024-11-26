@@ -211,15 +211,20 @@ const recipeData = {
   },
 };
 function App() {
+  //Gets the current Recipe Name
   const [selectedRecipe, setSelectedRecipe] = useState("Beef Noodles");
+  // Gets the number of servings
+  const [numOfServings, setNumOfServings] = useState(2);
   return (
     <div>
       <Header />
       <Settings
         selectedRecipe={selectedRecipe}
         onSetSelectedRecipe={setSelectedRecipe}
+        numOfServings={numOfServings}
+        onSetNumOfServings={setNumOfServings}
       />
-      <Body selectedRecipe={selectedRecipe} />
+      <Body selectedRecipe={selectedRecipe} numOfServings={numOfServings} />
     </div>
   );
 }
@@ -233,28 +238,46 @@ function Header() {
   );
 }
 
-function Settings({ selectedRecipe, onSetSelectedRecipe }) {
+function Settings({
+  selectedRecipe,
+  onSetSelectedRecipe,
+  numOfServings,
+  onSetNumOfServings,
+}) {
   const recipes = recipeNames;
   return (
     <div className="margin">
       <h2>Settings</h2>
-      <div>
-        <select
-          value={selectedRecipe}
-          onChange={(e) => onSetSelectedRecipe(e.target.value)}
-        >
-          {recipes.map((recipe) => (
-            <RecipeOptions recipeObj={recipe} key={recipe.title} />
-          ))}
-        </select>
-        <select>
-          <option></option>
-        </select>
+      <div className="flex">
+        <div>
+          <h3>Recipe</h3>
+          <select
+            value={selectedRecipe}
+            onChange={(e) => onSetSelectedRecipe(e.target.value)}
+          >
+            {recipes.map((recipe) => (
+              <RecipeOptions recipeObj={recipe} key={recipe.title} />
+            ))}
+          </select>
+        </div>
+        <div className="setting">
+          <h3>Number Of Servings</h3>
+          <select
+            value={numOfServings}
+            onChange={(e) => onSetNumOfServings(e.target.value)}
+          >
+            {Array.from({ length: 8 }, (_, i) => i + 1).map((num) => (
+              <option value={num} key={num}>
+                {num}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );
 }
-function Body({ selectedRecipe }) {
+function Body({ selectedRecipe, numOfServings }) {
   const recipeObjects = recipeData;
   const object = selectedRecipe.replace(/\s+/g, "");
   const currentObject = recipeObjects[object];
@@ -262,7 +285,7 @@ function Body({ selectedRecipe }) {
     <div>
       <div className="recipe-body margin">
         <Ingredients currentObject={currentObject} />
-        <Steps currentObject={currentObject} />
+        <Steps currentObject={currentObject} numOfServings={numOfServings} />
       </div>
     </div>
   );
@@ -276,7 +299,18 @@ function Ingredients({ currentObject }) {
   );
 }
 
-function Steps({ currentObject }) {
+function Steps({ currentObject, numOfServings }) {
+  {
+    function updateIngredientMap(currentObject, numOfServings) {
+      const ingredientMap = { ...currentObject.ingredientMap };
+      console.log("ingredient Map", ingredientMap);
+      Object.keys(ingredientMap).forEach((key, index) => {
+        ingredientMap[key] = ingredientMap[key] * numOfServings;
+      });
+      console.log("Updated Ingredient Map", ingredientMap);
+    }
+    updateIngredientMap(currentObject, numOfServings);
+  }
   return (
     <div className="steps body-parts">
       <h2>Steps</h2>
@@ -289,3 +323,57 @@ function RecipeOptions({ recipeObj }) {
   return <option value={recipeObj.title}>{recipeObj.title}</option>;
 }
 export default App;
+
+{
+  /*
+  function updateIngredientMap(numOfServings) {
+  recipe = getRecipe(); 
+  ingredientMap = { ...recipe.ingredientMap };
+  Object.keys(ingredientMap).forEach((key, index) => {
+    ingredientMap[key] = ingredientMap[key] * numOfServings;
+  });
+}
+
+function calculateSteps(recipe) {
+  recipe = getRecipe();
+  numOfServings = parseFloat(document.getElementById("input").value);
+  if (isNaN(numOfServings) || numOfServings <= 0) {
+    console.log("fuck");
+    return;
+  } else {
+    updateIngredientMap(numOfServings);
+
+    const updatedSteps = recipe.steps.map((step) => {
+      let updatedStep = step;
+      for (const [key, amount] of Object.entries(ingredientMap)) {
+        updatedStep = updatedStep.replace(`{${key}}`, amount);
+      }
+      return updatedStep;
+    });
+    updateHTML(updatedSteps, "#steps");
+  }
+}
+
+function calculateIngredients(recipe) {
+  recipe = getRecipe();
+  numOfServings = parseFloat(document.getElementById("input").value);
+  if (isNaN(numOfServings) || numOfServings <= 0) {
+    console.log("fuck");
+    return;
+  } else {
+    updateIngredientMap(numOfServings);
+
+
+const updatedIngredients = recipe.ingredients.map((ingredient) => {
+      let updatedIng = ingredient;
+      for (const [key, amount] of Object.entries(ingredientMap)) {
+        updatedIng = updatedIng.replace(`{${key}}`, amount);
+      }
+      return updatedIng;
+    });
+    updateHTML(updatedIngredients, "#ingredients");
+  }
+}
+}
+*/
+}
