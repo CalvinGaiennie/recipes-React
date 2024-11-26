@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "./App.css";
-import { click } from "@testing-library/user-event/dist/click";
 const recipeNames = [
   { title: "Sushi Rice", key: "SushiRice" },
   { title: "Pita Bread", key: "PitaBread" },
@@ -281,40 +280,82 @@ function Body({ selectedRecipe, numOfServings }) {
   const recipeObjects = recipeData;
   const object = selectedRecipe.replace(/\s+/g, "");
   const currentObject = recipeObjects[object];
+  function updateIngredientMap(currentObject, numOfServings) {
+    const ingredientMap = { ...currentObject.ingredientMap };
+    Object.keys(ingredientMap).forEach((key, index) => {
+      ingredientMap[key] = ingredientMap[key] * numOfServings;
+    });
+    return ingredientMap;
+  }
+  const updatedIngredientMap = updateIngredientMap(
+    currentObject,
+    numOfServings
+  );
+
   return (
     <div>
       <div className="recipe-body margin">
-        <Ingredients currentObject={currentObject} />
-        <Steps currentObject={currentObject} numOfServings={numOfServings} />
+        <Ingredients
+          currentObject={currentObject}
+          updatedIngredientMap={updatedIngredientMap}
+        />
+        <Steps
+          currentObject={currentObject}
+          updatedIngredientMap={updatedIngredientMap}
+        />
       </div>
     </div>
   );
 }
-function Ingredients({ currentObject }) {
+function Ingredients({ currentObject, updatedIngredientMap }) {
+  function calculateIngredients(currentObject, updatedIngredientMap) {
+    const updatedIngredients = currentObject.ingredients.map((ingredient) => {
+      let updatedIng = ingredient;
+      for (const [key, amount] of Object.entries(updatedIngredientMap)) {
+        updatedIng = updatedIng.replace(`{${key}}`, amount);
+      }
+      return updatedIng;
+    });
+    return updatedIngredients;
+  }
+  const currentIngredients = calculateIngredients(
+    currentObject,
+    updatedIngredientMap
+  );
   return (
     <div className="body-parts">
       <h2>Ingredients</h2>
-      <p>{currentObject.ingredients}</p>
+      <p>
+        {currentIngredients.map((ingredient) => (
+          <p>•{ingredient}</p>
+        ))}
+      </p>
     </div>
   );
 }
 
-function Steps({ currentObject, numOfServings }) {
-  {
-    function updateIngredientMap(currentObject, numOfServings) {
-      const ingredientMap = { ...currentObject.ingredientMap };
-      console.log("ingredient Map", ingredientMap);
-      Object.keys(ingredientMap).forEach((key, index) => {
-        ingredientMap[key] = ingredientMap[key] * numOfServings;
-      });
-      console.log("Updated Ingredient Map", ingredientMap);
-    }
-    updateIngredientMap(currentObject, numOfServings);
+function Steps({ currentObject, updatedIngredientMap }) {
+  console.log(updatedIngredientMap);
+
+  function calculateSteps(currentObject, updatedIngredientMap) {
+    const updatedSteps = currentObject.steps.map((step) => {
+      let updatedStep = step;
+      for (const [key, amount] of Object.entries(updatedIngredientMap)) {
+        updatedStep = updatedStep.replace(`{${key}}`, amount);
+      }
+      return updatedStep;
+    });
+    return updatedSteps;
   }
+  const currentSteps = calculateSteps(currentObject, updatedIngredientMap);
   return (
     <div className="steps body-parts">
       <h2>Steps</h2>
-      <p>{currentObject.steps}</p>
+      <p>
+        {currentSteps.map((step) => (
+          <p>{step}</p>
+        ))}
+      </p>
     </div>
   );
 }
@@ -323,57 +364,3 @@ function RecipeOptions({ recipeObj }) {
   return <option value={recipeObj.title}>{recipeObj.title}</option>;
 }
 export default App;
-
-{
-  /*
-  function updateIngredientMap(numOfServings) {
-  recipe = getRecipe(); 
-  ingredientMap = { ...recipe.ingredientMap };
-  Object.keys(ingredientMap).forEach((key, index) => {
-    ingredientMap[key] = ingredientMap[key] * numOfServings;
-  });
-}
-
-function calculateSteps(recipe) {
-  recipe = getRecipe();
-  numOfServings = parseFloat(document.getElementById("input").value);
-  if (isNaN(numOfServings) || numOfServings <= 0) {
-    console.log("fuck");
-    return;
-  } else {
-    updateIngredientMap(numOfServings);
-
-    const updatedSteps = recipe.steps.map((step) => {
-      let updatedStep = step;
-      for (const [key, amount] of Object.entries(ingredientMap)) {
-        updatedStep = updatedStep.replace(`{${key}}`, amount);
-      }
-      return updatedStep;
-    });
-    updateHTML(updatedSteps, "#steps");
-  }
-}
-
-function calculateIngredients(recipe) {
-  recipe = getRecipe();
-  numOfServings = parseFloat(document.getElementById("input").value);
-  if (isNaN(numOfServings) || numOfServings <= 0) {
-    console.log("fuck");
-    return;
-  } else {
-    updateIngredientMap(numOfServings);
-
-
-const updatedIngredients = recipe.ingredients.map((ingredient) => {
-      let updatedIng = ingredient;
-      for (const [key, amount] of Object.entries(ingredientMap)) {
-        updatedIng = updatedIng.replace(`{${key}}`, amount);
-      }
-      return updatedIng;
-    });
-    updateHTML(updatedIngredients, "#ingredients");
-  }
-}
-}
-*/
-}
