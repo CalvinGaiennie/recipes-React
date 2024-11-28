@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../App.css";
 import { Header } from "./Header";
-import { Settings } from "./Settings";
+import { Settings } from "./Header";
 import { Body } from "./Body";
 export const recipeNames = [
   { title: "Sushi Rice", key: "SushiRice" },
@@ -219,13 +219,19 @@ function App() {
   const [numOfServings, setNumOfServings] = useState(2);
   return (
     <div>
-      <Header />
-      <Settings
+      <Header
         selectedRecipe={selectedRecipe}
         onSetSelectedRecipe={setSelectedRecipe}
         numOfServings={numOfServings}
         onSetNumOfServings={setNumOfServings}
       />
+      <hr></hr>
+      {/* <Settings
+        selectedRecipe={selectedRecipe}
+        onSetSelectedRecipe={setSelectedRecipe}
+        numOfServings={numOfServings}
+        onSetNumOfServings={setNumOfServings}
+      /> */}
       <Body selectedRecipe={selectedRecipe} numOfServings={numOfServings} />
     </div>
   );

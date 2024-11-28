@@ -37,20 +37,23 @@
   }
 }
 
+body {
+  background: #f7f7ef;
+}
+
+.flex {
+  display: flex;
+}
 .recipe-body {
   display: flex;
   /* margin: 50px; */
 }
 
 .margin {
-  margin-left: 3vw;
+  margin-left: 5vw;
 }
-.steps {
+.margin2 {
   margin-left: 10vw;
-}
-
-.flex {
-  display: flex;
 }
 
 .setting {
@@ -63,13 +66,8 @@
 }
 
 .header-content {
-  padding: 1vw;
+  padding: 2vh;
   text-align: center;
-}
-
-.settings {
-  /* background-color: #a8c686; */
-  padding: 1vw;
 }
 
 h2 {
@@ -79,3 +77,8 @@ h2 {
 /* .body-parts {
   background-color: #f8c469;
 } */
+
+.settings {
+  justify-content: flex-end;
+  /* padding: 1vw; */
+}

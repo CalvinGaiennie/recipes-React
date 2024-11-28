@@ -13,7 +13,7 @@ export function Steps({ currentObject, updatedIngredientMap }) {
   }
   const currentSteps = calculateSteps(currentObject, updatedIngredientMap);
   return (
-    <div className="steps body-parts">
+    <div className="margin2 body-parts">
       <h2>Steps</h2>
       <p>
         {currentSteps.map((step) => (
