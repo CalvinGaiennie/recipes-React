@@ -43,7 +43,7 @@
 }
 
 .margin {
-  margin: 3vw;
+  margin-left: 3vw;
 }
 .steps {
   margin-left: 10vw;
@@ -56,3 +56,26 @@
 .setting {
   margin-left: 15vh;
 }
+
+.header {
+  margin: 0px;
+  /* background-color: #faf9f6; */
+}
+
+.header-content {
+  padding: 1vw;
+  text-align: center;
+}
+
+.settings {
+  /* background-color: #a8c686; */
+  padding: 1vw;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+/* .body-parts {
+  background-color: #f8c469;
+} */

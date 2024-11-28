@@ -1,6 +1,9 @@
 import { useState } from "react";
-import "./App.css";
-const recipeNames = [
+import "../App.css";
+import { Header } from "./Header";
+import { Settings } from "./Settings";
+import { Body } from "./Body";
+export const recipeNames = [
   { title: "Sushi Rice", key: "SushiRice" },
   { title: "Pita Bread", key: "PitaBread" },
   { title: "Chicken Salad", key: "ChickenSalad" },
@@ -9,7 +12,7 @@ const recipeNames = [
   { title: "Meatloaf", key: "Meatloaf" },
 ];
 
-const recipeData = {
+export const recipeData = {
   SushiRice: {
     title: "Sushi Rice",
     ingredients: [
@@ -228,139 +231,4 @@ function App() {
   );
 }
 
-function Header() {
-  return (
-    <div className="header margin">
-      <h1>Calvin's Recipes</h1>
-      <h2>Here are some recipes I've been enjoying recently.</h2>
-    </div>
-  );
-}
-
-function Settings({
-  selectedRecipe,
-  onSetSelectedRecipe,
-  numOfServings,
-  onSetNumOfServings,
-}) {
-  const recipes = recipeNames;
-  return (
-    <div className="margin">
-      <h2>Settings</h2>
-      <div className="flex">
-        <div>
-          <h3>Recipe</h3>
-          <select
-            value={selectedRecipe}
-            onChange={(e) => onSetSelectedRecipe(e.target.value)}
-          >
-            {recipes.map((recipe) => (
-              <RecipeOptions recipeObj={recipe} key={recipe.title} />
-            ))}
-          </select>
-        </div>
-        <div className="setting">
-          <h3>Number Of Servings</h3>
-          <select
-            value={numOfServings}
-            onChange={(e) => onSetNumOfServings(e.target.value)}
-          >
-            {Array.from({ length: 8 }, (_, i) => i + 1).map((num) => (
-              <option value={num} key={num}>
-                {num}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-    </div>
-  );
-}
-function Body({ selectedRecipe, numOfServings }) {
-  const recipeObjects = recipeData;
-  const object = selectedRecipe.replace(/\s+/g, "");
-  const currentObject = recipeObjects[object];
-  function updateIngredientMap(currentObject, numOfServings) {
-    const ingredientMap = { ...currentObject.ingredientMap };
-    Object.keys(ingredientMap).forEach((key, index) => {
-      ingredientMap[key] = ingredientMap[key] * numOfServings;
-    });
-    return ingredientMap;
-  }
-  const updatedIngredientMap = updateIngredientMap(
-    currentObject,
-    numOfServings
-  );
-
-  return (
-    <div>
-      <div className="recipe-body margin">
-        <Ingredients
-          currentObject={currentObject}
-          updatedIngredientMap={updatedIngredientMap}
-        />
-        <Steps
-          currentObject={currentObject}
-          updatedIngredientMap={updatedIngredientMap}
-        />
-      </div>
-    </div>
-  );
-}
-function Ingredients({ currentObject, updatedIngredientMap }) {
-  function calculateIngredients(currentObject, updatedIngredientMap) {
-    const updatedIngredients = currentObject.ingredients.map((ingredient) => {
-      let updatedIng = ingredient;
-      for (const [key, amount] of Object.entries(updatedIngredientMap)) {
-        updatedIng = updatedIng.replace(`{${key}}`, amount);
-      }
-      return updatedIng;
-    });
-    return updatedIngredients;
-  }
-  const currentIngredients = calculateIngredients(
-    currentObject,
-    updatedIngredientMap
-  );
-  return (
-    <div className="body-parts">
-      <h2>Ingredients</h2>
-      <p>
-        {currentIngredients.map((ingredient) => (
-          <p>•{ingredient}</p>
-        ))}
-      </p>
-    </div>
-  );
-}
-
-function Steps({ currentObject, updatedIngredientMap }) {
-  console.log(updatedIngredientMap);
-
-  function calculateSteps(currentObject, updatedIngredientMap) {
-    const updatedSteps = currentObject.steps.map((step) => {
-      let updatedStep = step;
-      for (const [key, amount] of Object.entries(updatedIngredientMap)) {
-        updatedStep = updatedStep.replace(`{${key}}`, amount);
-      }
-      return updatedStep;
-    });
-    return updatedSteps;
-  }
-  const currentSteps = calculateSteps(currentObject, updatedIngredientMap);
-  return (
-    <div className="steps body-parts">
-      <h2>Steps</h2>
-      <p>
-        {currentSteps.map((step) => (
-          <p>{step}</p>
-        ))}
-      </p>
-    </div>
-  );
-}
-
-function RecipeOptions({ recipeObj }) {
-  return <option value={recipeObj.title}>{recipeObj.title}</option>;
-}
 export default App;
